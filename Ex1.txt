@@ -1,0 +1,499 @@
+SQL> create table student
+  2  (
+  3  roll number primary key,
+  4  sname varchar(30),
+  5  dept char(5),
+  6  sem number
+  7  );
+
+Table created.
+
+SQL> create table placement
+  2  (
+  3  placementID number primary key,
+  4  roll number,
+  5  dept char(5),
+  6  company varchar2(30),
+  7  salary number
+  8  );
+
+Table created.
+
+SQL> insert into student(roll, sname, dept, sem) values(101,'ram','IT',5);
+
+1 row created.
+
+SQL> insert into student(roll, sname, dept, sem) values(102,'rahim','IT',3);
+
+1 row created.
+
+SQL> insert into student(roll, sname, dept, sem) values(103,'saravanan','CSE',3);
+
+1 row created.
+
+SQL> insert into student(roll, sname, dept, sem) values(104,'Nataraj','IT',3);
+
+1 row created.
+
+SQL> insert into student(roll, sname, dept, sem) values(105,'Elango','CSE',5);
+
+1 row created.
+
+SQL> select * from student;
+
+      ROLL SNAME                          DEPT         SEM                      
+---------- ------------------------------ ----- ----------                      
+       101 ram                            IT             5                      
+       102 rahim                          IT             3                      
+       103 saravanan                      CSE            3                      
+       104 Nataraj                        IT             3                      
+       105 Elango                         CSE            5                      
+
+SQL> insert into placement(placementID,roll,dept,company,salary) values(1,104,'IT','infosys',25000);
+
+1 row created.
+
+SQL>  insert into placement(placementID,roll,dept,company,salary) values(2,105,'CSE','wipro',22000);
+
+1 row created.
+
+SQL>  insert into placement(placementID,roll,dept,company,salary) values(3,204,'MECH','hyundai',30000);
+
+1 row created.
+
+SQL>  insert into placement(placementID,roll,dept,company,salary) values(4,102,'IT','infosys',25000);
+
+1 row created.
+
+SQL>  insert into placement(placementID,roll,dept,company,salary) values(5,103,'CSE','infosys',25000);
+
+1 row created.
+
+SQL> select * from placement;
+
+PLACEMENTID       ROLL DEPT  COMPANY                            SALARY          
+----------- ---------- ----- ------------------------------ ----------          
+          1        104 IT    infosys                             25000          
+          2        105 CSE   wipro                               22000          
+          3        204 MECH  hyundai                             30000          
+          4        102 IT    infosys                             25000          
+          5        103 CSE   infosys                             25000          
+
+SQL> select * from student, placement where student.roll = placement.roll;
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       104 Nataraj                        IT             3           1          
+       104 IT    infosys                             25000                      
+                                                                                
+       105 Elango                         CSE            5           2          
+       105 CSE   wipro                               22000                      
+                                                                                
+       102 rahim                          IT             3           4          
+       102 IT    infosys                             25000                      
+                                                                                
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       103 saravanan                      CSE            3           5          
+       103 CSE   infosys                             25000                      
+                                                                                
+
+SQL> select student.roll, student.sname, placement.company, placement.salary from
+  2  student, placement where student.roll = placement.roll;
+
+      ROLL SNAME                          COMPANY                               
+---------- ------------------------------ ------------------------------        
+    SALARY                                                                      
+----------                                                                      
+       104 Nataraj                        infosys                               
+     25000                                                                      
+                                                                                
+       105 Elango                         wipro                                 
+     22000                                                                      
+                                                                                
+       102 rahim                          infosys                               
+     25000                                                                      
+                                                                                
+
+      ROLL SNAME                          COMPANY                               
+---------- ------------------------------ ------------------------------        
+    SALARY                                                                      
+----------                                                                      
+       103 saravanan                      infosys                               
+     25000                                                                      
+                                                                                
+
+SQL> select * from student, placement where student.roll = placement.roll(+);
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       104 Nataraj                        IT             3           1          
+       104 IT    infosys                             25000                      
+                                                                                
+       105 Elango                         CSE            5           2          
+       105 CSE   wipro                               22000                      
+                                                                                
+       102 rahim                          IT             3           4          
+       102 IT    infosys                             25000                      
+                                                                                
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       103 saravanan                      CSE            3           5          
+       103 CSE   infosys                             25000                      
+                                                                                
+       101 ram                            IT             5                      
+                                                                                
+                                                                                
+
+SQL> select student.sname, placement.placementid, placement.roll, placement.company from
+  2  student, placement where student.roll = placement.roll(+);
+
+SNAME                          PLACEMENTID       ROLL                           
+------------------------------ ----------- ----------                           
+COMPANY                                                                         
+------------------------------                                                  
+Nataraj                                  1        104                           
+infosys                                                                         
+                                                                                
+Elango                                   2        105                           
+wipro                                                                           
+                                                                                
+rahim                                    4        102                           
+infosys                                                                         
+                                                                                
+
+SNAME                          PLACEMENTID       ROLL                           
+------------------------------ ----------- ----------                           
+COMPANY                                                                         
+------------------------------                                                  
+saravanan                                5        103                           
+infosys                                                                         
+                                                                                
+ram                                                                             
+                                                                                
+                                                                                
+
+SQL> select * from student, placement where student.roll(+) = placement.roll;
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       102 rahim                          IT             3           4          
+       102 IT    infosys                             25000                      
+                                                                                
+       103 saravanan                      CSE            3           5          
+       103 CSE   infosys                             25000                      
+                                                                                
+       104 Nataraj                        IT             3           1          
+       104 IT    infosys                             25000                      
+                                                                                
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       105 Elango                         CSE            5           2          
+       105 CSE   wipro                               22000                      
+                                                                                
+                                                                     3          
+       204 MECH  hyundai                             30000                      
+                                                         
+
+SQL> select student.sname, placement.placementid, placement.roll, placement.company from
+  2  student, placement where student.roll(+) = placement.roll;
+
+SNAME                          PLACEMENTID       ROLL                           
+------------------------------ ----------- ----------                           
+COMPANY                                                                         
+------------------------------                                                  
+rahim                                    4        102                           
+infosys                                                                         
+                                                                                
+saravanan                                5        103                           
+infosys                                                                         
+                                                                                
+Nataraj                                  1        104                           
+infosys                                                                         
+                                                                                
+
+SNAME                          PLACEMENTID       ROLL                           
+------------------------------ ----------- ----------                           
+COMPANY                                                                         
+------------------------------                                                  
+Elango                                   2        105                           
+wipro                                                                           
+                                                                                
+                                         3        204                           
+hyundai                                                                         
+                                                                                
+
+SQL> select * from student, placement where student.roll(+) = placement.roll
+  2  union all
+  3  select * from student, placement where placement.roll(+) = student.roll and
+  4  placement.roll is null;
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       102 rahim                          IT             3           4          
+       102 IT    infosys                             25000                      
+                                                                                
+       103 saravanan                      CSE            3           5          
+       103 CSE   infosys                             25000                      
+                                                                                
+       104 Nataraj                        IT             3           1          
+       104 IT    infosys                             25000                      
+                                                                                
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       105 Elango                         CSE            5           2          
+       105 CSE   wipro                               22000                      
+                                                                                
+                                                                     3          
+       204 MECH  hyundai                             30000                      
+                                                                                
+       101 ram                            IT             5                      
+                                                                                
+                                                                                
+
+6 rows selected.
+
+SQL> select student.roll, student.sname, placement.company from student, placement where
+  2  student.roll = placement.roll;
+
+      ROLL SNAME                          COMPANY                               
+---------- ------------------------------ ------------------------------        
+       104 Nataraj                        infosys                               
+       105 Elango                         wipro                                 
+       102 rahim                          infosys                               
+       103 saravanan                      infosys                               
+
+SQL> select student.roll, student.sname, placement.company from student, placement where
+  2  student.roll > placement.roll;
+
+      ROLL SNAME                          COMPANY                               
+---------- ------------------------------ ------------------------------        
+       105 Elango                         infosys                               
+       105 Elango                         infosys                               
+       105 Elango                         infosys                               
+       104 Nataraj                        infosys                               
+       104 Nataraj                        infosys                               
+       103 saravanan                      infosys                               
+
+6 rows selected.
+
+SQL> select student.roll, student.sname, placement.company from student, placement where
+  2  student.roll < placement.roll;
+
+      ROLL SNAME                          COMPANY                               
+---------- ------------------------------ ------------------------------        
+       101 ram                            infosys                               
+       101 ram                            infosys                               
+       101 ram                            infosys                               
+       101 ram                            wipro                                 
+       101 ram                            hyundai                               
+       102 rahim                          infosys                               
+       102 rahim                          infosys                               
+       102 rahim                          wipro                                 
+       102 rahim                          hyundai                               
+       103 saravanan                      infosys                               
+       103 saravanan                      wipro                                 
+
+      ROLL SNAME                          COMPANY                               
+---------- ------------------------------ ------------------------------        
+       103 saravanan                      hyundai                               
+       104 Nataraj                        wipro                                 
+       104 Nataraj                        hyundai                               
+       105 Elango                         hyundai                               
+
+15 rows selected.
+
+SQL> create table employee
+  2  (
+  3  empid number,
+  4  empname varchar2(20),
+  5  reportingid number
+  6  );
+
+Table created.
+
+SQL> insert into employee values(1,'Principal',null);
+
+1 row created.
+
+SQL> insert into employee values(2,'HOD',1);
+
+1 row created.
+
+SQL> insert into employee values(3,'PO',1);
+
+1 row created.
+
+SQL> insert into employee values(4,'Staff',2);
+
+1 row created.
+
+SQL> insert into employee values(5,'N T Staff',2);
+
+1 row created.
+
+SQL> select * from employee;
+
+     EMPID EMPNAME              REPORTINGID                                     
+---------- -------------------- -----------                                     
+         1 Principal                                                            
+         2 HOD                            1                                     
+         3 PO                             1                                     
+         4 Staff                          2                                     
+         5 N T Staff                      2                                     
+
+SQL> select e1.empid, e1.empname, e2.empname as Head_name from employee e1, employee e2
+  2  where e1.reportingid = e2.empid;
+
+     EMPID EMPNAME              HEAD_NAME                                       
+---------- -------------------- --------------------                            
+         2 HOD                  Principal                                       
+         3 PO                   Principal                                       
+         4 Staff                HOD                                             
+         5 N T Staff            HOD                                             
+
+SQL> select * from student, placement;
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       101 ram                            IT             5           1          
+       104 IT    infosys                             25000                      
+                                                                                
+       102 rahim                          IT             3           1          
+       104 IT    infosys                             25000                      
+                                                                                
+       103 saravanan                      CSE            3           1          
+       104 IT    infosys                             25000                      
+                                                                                
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       104 Nataraj                        IT             3           1          
+       104 IT    infosys                             25000                      
+                                                                                
+       105 Elango                         CSE            5           1          
+       104 IT    infosys                             25000                      
+                                                                                
+       101 ram                            IT             5           2          
+       105 CSE   wipro                               22000                      
+                                                                                
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       102 rahim                          IT             3           2          
+       105 CSE   wipro                               22000                      
+                                                                                
+       103 saravanan                      CSE            3           2          
+       105 CSE   wipro                               22000                      
+                                                                                
+       104 Nataraj                        IT             3           2          
+       105 CSE   wipro                               22000                      
+                                                                                
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       105 Elango                         CSE            5           2          
+       105 CSE   wipro                               22000                      
+                                                                                
+       101 ram                            IT             5           3          
+       204 MECH  hyundai                             30000                      
+                                                                                
+       102 rahim                          IT             3           3          
+       204 MECH  hyundai                             30000                      
+                                                                                
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       103 saravanan                      CSE            3           3          
+       204 MECH  hyundai                             30000                      
+                                                                                
+       104 Nataraj                        IT             3           3          
+       204 MECH  hyundai                             30000                      
+                                                                                
+       105 Elango                         CSE            5           3          
+       204 MECH  hyundai                             30000                      
+                                                                                
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       101 ram                            IT             5           4          
+       102 IT    infosys                             25000                      
+                                                                                
+       102 rahim                          IT             3           4          
+       102 IT    infosys                             25000                      
+                                                                                
+       103 saravanan                      CSE            3           4          
+       102 IT    infosys                             25000                      
+                                                                                
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       104 Nataraj                        IT             3           4          
+       102 IT    infosys                             25000                      
+                                                                                
+       105 Elango                         CSE            5           4          
+       102 IT    infosys                             25000                      
+                                                                                
+       101 ram                            IT             5           5          
+       103 CSE   infosys                             25000                      
+                                                                                
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       102 rahim                          IT             3           5          
+       103 CSE   infosys                             25000                      
+                                                                                
+       103 saravanan                      CSE            3           5          
+       103 CSE   infosys                             25000                      
+                                                                                
+       104 Nataraj                        IT             3           5          
+       103 CSE   infosys                             25000                      
+                                                                                
+
+      ROLL SNAME                          DEPT         SEM PLACEMENTID          
+---------- ------------------------------ ----- ---------- -----------          
+      ROLL DEPT  COMPANY                            SALARY                      
+---------- ----- ------------------------------ ----------                      
+       105 Elango                         CSE            5           5          
+       103 CSE   infosys                             25000                      
+                                                                                
+
+25 rows selected.
+
+SQL> spool off

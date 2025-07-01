@@ -1,0 +1,202 @@
+SQL> -- Step 1: Create Tables
+SQL> CREATE TABLE students (
+  2      student_id NUMBER PRIMARY KEY,
+  3      student_name VARCHAR2(50)
+  4  );
+
+Table created.
+
+SQL> 
+SQL> CREATE TABLE exam_results (
+  2      result_id NUMBER PRIMARY KEY,
+  3      student_id NUMBER,
+  4      subject VARCHAR2(50),
+  5      exam_term VARCHAR2(20),
+  6      score NUMBER,
+  7      FOREIGN KEY (student_id) REFERENCES students(student_id)
+  8  );
+
+Table created.
+
+SQL> 
+SQL> -- Step 2: Insert Sample Data
+SQL> INSERT INTO students VALUES (1, 'Arjun');
+
+1 row created.
+
+SQL> INSERT INTO students VALUES (2, 'Bala');
+
+1 row created.
+
+SQL> INSERT INTO students VALUES (3, 'Chandru');
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO exam_results VALUES (1, 1, 'Math', 'Term1', 85);
+
+1 row created.
+
+SQL> INSERT INTO exam_results VALUES (2, 1, 'Math', 'Term2', 90);
+
+1 row created.
+
+SQL> INSERT INTO exam_results VALUES (3, 1, 'Science', 'Term1', 78);
+
+1 row created.
+
+SQL> INSERT INTO exam_results VALUES (4, 1, 'Science', 'Term2', 88);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO exam_results VALUES (5, 2, 'Math', 'Term1', 72);
+
+1 row created.
+
+SQL> INSERT INTO exam_results VALUES (6, 2, 'Math', 'Term2', 75);
+
+1 row created.
+
+SQL> INSERT INTO exam_results VALUES (7, 2, 'Science', 'Term1', 74);
+
+1 row created.
+
+SQL> INSERT INTO exam_results VALUES (8, 2, 'Science', 'Term2', 76);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO exam_results VALUES (9, 3, 'Math', 'Term1', 65);
+
+1 row created.
+
+SQL> INSERT INTO exam_results VALUES (10, 3, 'Science', 'Term1', 68);
+
+1 row created.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> -- Step 3: Run the Analysis Using CTE, Subquery, and Window Functions
+SQL> WITH student_avg AS (
+  2      SELECT student_id, AVG(score) AS avg_score
+  3      FROM exam_results
+  4      GROUP BY student_id
+  5  ),
+  6  exam_trends AS (
+  7      SELECT
+  8          e.student_id,
+  9          s.student_name,
+ 10          e.subject,
+ 11          e.exam_term,
+ 12          e.score,
+ 13          LAG(e.score) OVER (
+ 14              PARTITION BY e.student_id, e.subject
+ 15              ORDER BY e.exam_term
+ 16          ) AS previous_score
+ 17      FROM exam_results e
+ 18      JOIN students s ON s.student_id = e.student_id
+ 19  )
+ 20  SELECT
+ 21      t.student_id,
+ 22      t.student_name,
+ 23      t.subject,
+ 24      t.exam_term,
+ 25      t.score,
+ 26      t.previous_score,
+ 27      (t.score - t.previous_score) AS score_change,
+ 28      a.avg_score,
+ 29      RANK() OVER (ORDER BY a.avg_score DESC) AS student_rank
+ 30  FROM exam_trends t
+ 31  JOIN student_avg a ON t.student_id = a.student_id
+ 32  ORDER BY t.student_id, t.subject, t.exam_term;
+
+STUDENT_ID STUDENT_NAME                                                         
+---------- --------------------------------------------------                   
+SUBJECT                                            EXAM_TERM                    
+-------------------------------------------------- --------------------         
+     SCORE PREVIOUS_SCORE SCORE_CHANGE  AVG_SCORE STUDENT_RANK                  
+---------- -------------- ------------ ---------- ------------                  
+         1 Arjun                                                                
+Math                                               Term1                        
+        85                                  85.25            1                  
+                                                                                
+         1 Arjun                                                                
+Math                                               Term2                        
+        90             85            5      85.25            1                  
+
+STUDENT_ID STUDENT_NAME                                                         
+---------- --------------------------------------------------                   
+SUBJECT                                            EXAM_TERM                    
+-------------------------------------------------- --------------------         
+     SCORE PREVIOUS_SCORE SCORE_CHANGE  AVG_SCORE STUDENT_RANK                  
+---------- -------------- ------------ ---------- ------------                  
+                                                                                
+         1 Arjun                                                               
+Science                                            Term1                        
+        78                                  85.25            1                  
+                                                                                
+         1 Arjun                                                                
+Science                                            Term2                        
+
+STUDENT_ID STUDENT_NAME                                                         
+---------- --------------------------------------------------                   
+SUBJECT                                            EXAM_TERM                    
+-------------------------------------------------- --------------------         
+     SCORE PREVIOUS_SCORE SCORE_CHANGE  AVG_SCORE STUDENT_RANK                  
+---------- -------------- ------------ ---------- ------------                  
+        88             78           10      85.25            1                  
+                                                                                
+         2 Bala                                                                  
+Math                                               Term1                        
+        72                                  74.25            5                  
+                                                                                
+         2 Bala                                                                 
+
+STUDENT_ID STUDENT_NAME                                                         
+---------- --------------------------------------------------                   
+SUBJECT                                            EXAM_TERM                    
+-------------------------------------------------- --------------------         
+     SCORE PREVIOUS_SCORE SCORE_CHANGE  AVG_SCORE STUDENT_RANK                  
+---------- -------------- ------------ ---------- ------------                  
+Math                                               Term2                        
+        75             72            3      74.25            5                  
+                                                                                
+         2 Bala                                                                 
+Science                                            Term1                        
+        74                                  74.25            5                  
+                                                                                
+
+STUDENT_ID STUDENT_NAME                                                         
+---------- --------------------------------------------------                   
+SUBJECT                                            EXAM_TERM                    
+-------------------------------------------------- --------------------         
+     SCORE PREVIOUS_SCORE SCORE_CHANGE  AVG_SCORE STUDENT_RANK                  
+---------- -------------- ------------ ---------- ------------                  
+         2 Bala                                                                 
+Science                                            Term2                        
+        76             74            2      74.25            5                  
+                                                                                
+         3 Chandru                                                              
+Math                                               Term1                        
+        65                                   66.5            9                  
+
+STUDENT_ID STUDENT_NAME                                                         
+---------- --------------------------------------------------                   
+SUBJECT                                            EXAM_TERM                    
+-------------------------------------------------- --------------------         
+     SCORE PREVIOUS_SCORE SCORE_CHANGE  AVG_SCORE STUDENT_RANK                  
+---------- -------------- ------------ ---------- ------------                  
+                                                                                
+         3 Chandru                                                             
+Science                                            Term1                        
+        68                                   66.5            9                  
+                                                                                
+
+10 rows selected.
+
+SQL> spool off
